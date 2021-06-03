@@ -20,8 +20,10 @@ start: $(venv_dir)
 	tmux split-window -t "test:0"   -v -p 50
 	tmux split-window -t "test:0.0" -h -p 50
 	tmux send-keys -t "test:0.0" "sudo $(supervisord) -c ./supervisord.conf" Enter
-	tmux send-keys -t "test:0.1" "sleep 3 && sudo $(supervisorctl) --serverurl unix:///run/supervisor-test-logfile.sock" Enter "status "  Enter
-	tmux send-keys -t "test:0.2" "sudo lsof 2>/dev/null | grep -P '/tmp/main-py.*deleted'"
+	tmux send-keys -t "test:0.1" "sleep 5"\
+								 " && $(supervisorctl) -c ./supervisord.conf status"\
+								 " && echo 1" Enter
+	tmux send-keys -t "test:0.2" "sudo lsof -nP +L1 | grep -P '/tmp/mainpy.*deleted'"
 	tmux select-pane -t "test:0.2"
 	tmux attach -t test
 	tmux kill-session -t test
